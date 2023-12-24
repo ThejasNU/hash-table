@@ -1,6 +1,7 @@
 package hashtable
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -14,7 +15,7 @@ func createNewItem(k string, v string) *item {
 	return &newItem
 }
 
-func CreateNewHashTable(hashTableSize int) *table {
+func createNewHashTable(hashTableSize int) *table {
 	newTable := table{
 		size:       hashTableSize,
 		itemsCount: 0,
@@ -28,8 +29,8 @@ func deleteItem(htItem *item) {
 	htItem = nil
 }
 
-func DeleteHashTable(hashTable *table) {
-	for i := 0; i < hashTable.size; i++ {
+func deleteHashTable(hashTable *table) {
+	for i := 0; i < len(hashTable.items); i++ {
 		hashTable.items[i] = nil
 	}
 	hashTable = nil
@@ -50,8 +51,8 @@ func (ht *table) resize(newSize int) {
 	if newSize < HASHTABLE_BASE_SIZE {
 		return
 	}
-
-	newHashTable := CreateNewHashTable(newSize)
+	fmt.Println(ht.size, ht.itemsCount)
+	newHashTable := createNewHashTable(newSize)
 	for i := 0; i < ht.size; i++ {
 		curItem := ht.items[i]
 		if curItem != nil && curItem != &DELETED_ITEM {
@@ -63,17 +64,17 @@ func (ht *table) resize(newSize int) {
 	ht.itemsCount = newHashTable.itemsCount
 	ht.items = newHashTable.items
 	newHashTable.items = make([]*item, 0)
-
-	DeleteHashTable(newHashTable)
+	fmt.Println(ht.size, ht.itemsCount)
+	deleteHashTable(newHashTable)
 }
 
 func (ht *table) scaleUp() {
-	newSize := getNextPrime(ht.size*2)
+	newSize := getNextPrime(ht.size * 2)
 	ht.resize(newSize)
 }
 
-func (ht *table) scaleDown(){
-	newSize:=getNextPrime(ht.size/2)
+func (ht *table) scaleDown() {
+	newSize := getNextPrime(ht.size / 2)
 	ht.resize(newSize)
 }
 

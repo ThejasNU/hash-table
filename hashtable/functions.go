@@ -17,6 +17,10 @@ func getHash(s string, numBuckets int, attempt int) int {
 	}
 }
 
+func InitTable() *table {
+	return createNewHashTable(7)
+}
+
 func (ht *table) Set(key string, value string) {
 	load := (ht.itemsCount * 100) / ht.size
 	if load > 70 {
