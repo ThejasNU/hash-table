@@ -18,14 +18,19 @@ func getHash(s string, numBuckets int, attempt int) int {
 }
 
 func (ht *table) Set(key string, value string) {
+	load := (ht.itemsCount * 100) / ht.size
+	if load > 70 {
+		ht.scaleUp()
+	}
+
 	newItem := createNewItem(key, value)
 	index := getHash(key, ht.size, 0)
 	curItem := ht.items[index]
 	attempt := 1
-	for curItem != nil && curItem!=&DELETED_ITEM {
+	for curItem != nil && curItem != &DELETED_ITEM {
 		//for update case
-		if curItem.key==key{
-			ht.items[index].value=value
+		if curItem.key == key {
+			ht.items[index].value = value
 			return
 		}
 		//continue searching if key doesn't exist
@@ -33,6 +38,7 @@ func (ht *table) Set(key string, value string) {
 		curItem = ht.items[index]
 		attempt++
 	}
+
 	ht.items[index] = newItem
 	ht.itemsCount++
 }
@@ -42,7 +48,7 @@ func (ht *table) Get(key string) (string, error) {
 	curItem := ht.items[index]
 	attempt := 1
 	for curItem != nil {
-		if curItem!=&DELETED_ITEM && curItem.key == key {
+		if curItem != &DELETED_ITEM && curItem.key == key {
 			return curItem.value, nil
 		}
 		index = getHash(key, ht.size, attempt)
@@ -52,8 +58,13 @@ func (ht *table) Get(key string) (string, error) {
 	return "", errors.New("key not found in hash-table!!")
 }
 
-//if we delete an item at an index, it may lead to not reaching the item at the end of collision chain while searching,so just mark element at that position as deleted
+// if we delete an item at an index, it may lead to not reaching the item at the end of collision chain while searching,so just mark element at that position as deleted
 func (ht *table) Delete(key string) error {
+	load := (ht.itemsCount * 100) / ht.size
+	if load < 10 {
+		ht.scaleDown()
+	}
+
 	index := getHash(key, ht.size, 0)
 	curItem := ht.items[index]
 	attempt := 1

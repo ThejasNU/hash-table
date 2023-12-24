@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-var HASHTABLE_BASE_SIZE = 7
+var HASHTABLE_BASE_SIZE = 5
 
 func createNewItem(k string, v string) *item {
 	newItem := item{
@@ -67,7 +67,42 @@ func (ht *table) resize(newSize int) {
 	DeleteHashTable(newHashTable)
 }
 
-func (ht *table) scaleUp(){
-	newSize:=ht.size*2
+func (ht *table) scaleUp() {
+	newSize := getNextPrime(ht.size*2)
 	ht.resize(newSize)
+}
+
+func (ht *table) scaleDown(){
+	newSize:=getNextPrime(ht.size/2)
+	ht.resize(newSize)
+}
+
+func getNextPrime(num int) int {
+	for !isPrime(num) {
+		num++
+	}
+
+	return num
+}
+
+func isPrime(num int) bool {
+	if num < 2 {
+		return false
+	}
+
+	if num < 4 {
+		return true
+	}
+
+	if num%2 == 0 {
+		return false
+	}
+
+	for i := 3; i < int(math.Sqrt(float64(num))); i += 2 {
+		if num%i == 0 {
+			return false
+		}
+	}
+
+	return true
 }
