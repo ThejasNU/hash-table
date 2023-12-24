@@ -10,7 +10,8 @@ import (
 func main() {
 	hastTable := hashtable.InitTable()
 
-	hastTable.Set("a", "123")
+	hastTable.Set("abc", "123")
+	hastTable.Set("abc", "456")
 
 	val, err := hastTable.Get("abc")
 	if err != nil {
